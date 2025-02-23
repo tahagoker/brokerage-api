@@ -63,30 +63,3 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             path.startsWith("/api/v1/auth/register");
     } */
 }
-/*
-@RequiredArgsConstructor
-public class JwtAuthorizationFilter extends OncePerRequestFilter {
-
-    private final JwtTokenProvider jwtTokenProvider;
-
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                  FilterChain filterChain) throws ServletException, IOException {
-        String basicAuth = request.getHeader("Authorization");
-        if (basicAuth != null && basicAuth.startsWith("Basic ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        String token = jwtTokenProvider.resolveToken(request);
-
-        if (token != null && jwtTokenProvider.validateToken(token)) {
-            Authentication auth = jwtTokenProvider.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(auth);
-        }
-
-        filterChain.doFilter(request, response);
-    }
-}
-
- */

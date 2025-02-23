@@ -4,6 +4,7 @@ import com.brokerage.stockorder.dto.LoginRequestDto;
 import com.brokerage.stockorder.dto.LoginResponseDto;
 import com.brokerage.stockorder.dto.RegisterRequestDto;
 import com.brokerage.stockorder.model.Customer;
+import com.brokerage.stockorder.service.AuthenticationService;
 import com.brokerage.stockorder.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,10 @@ public class CustomerController {
 
   @Autowired
   CustomerService customerService;
+
+
+  @Autowired
+  AuthenticationService authenticationService;
 
   /**
    * Register endpoint to create new user account
@@ -44,7 +49,7 @@ public class CustomerController {
   @PostMapping("/login")
   public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginRequestDto loginRequest) {
     log.info("Login attempt for user: {}", loginRequest.getUsername());
-    LoginResponseDto loginResponse = customerService.login(loginRequest.getUsername(), loginRequest.getPassword());
+    LoginResponseDto loginResponse = authenticationService.login(loginRequest.getUsername(), loginRequest.getPassword());
     return ResponseEntity.ok(loginResponse);
   }
 }
