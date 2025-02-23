@@ -4,11 +4,39 @@
 This is a Spring Boot-based backend service for a brokerage firm, allowing employees to manage stock orders for customers.
 
 ## Features
-- User Authentication (JWT-based)
+- User Authentication (JWT-based and Admin User/Pass in header)
 - Create, List, and Cancel Stock Orders
 - Asset Management
 - Admin Order Matching
 - Docker Support
+
+## API Documentation
+Access the full API documentation through Swagger UI at: `http://localhost:8080/swagger-ui/index.html`
+
+## Postman Collection
+You can find the Postman collection in the repository. 
+Note: Starting from Postman version 10.3.5, direct collection 
+sharing via links has been removed. 
+Please use the collection file from the repository.
+
+## Authentication Flow
+1. **Register a User (POST /auth/register)**
+   - Required fields:
+     - username
+     - password
+
+2. **Login to Get JWT Token (POST /auth/login)**
+   - Required fields:
+     - username
+     - password
+   - You'll receive a JWT token in response
+
+3. **Using the API**
+   - For all protected endpoints, include the JWT token in the Authorization header
+   - Use Bearer authentication scheme
+   - Example format can be found in the Postman collection
+   - Our put admin user/pass in header. it's default added in postman collection
+
 
 ## Prerequisites
 - Java 17
@@ -44,6 +72,20 @@ docker-compose up --build
 ```bash
 docker-compose down
 ```
+
+## Architecture Notes
+In production-ready brokerage applications, several architectural patterns and approaches are typically implemented to ensure scalability and high availability:
+- Message brokers for pub/sub communication
+- Microservices architecture
+- Saga pattern for distributed transactions
+- Outbox pattern for reliable message delivery
+- Event-driven architecture
+
+However, this project is implemented as a monolithic service due to:
+- Time constraints (weekend project)
+- Avoiding over-engineering for the case study
+- Simplicity in demonstration
+
 
 ## API Endpoints
 
@@ -88,15 +130,9 @@ mvn test
 - Customer-level authentication
 - Admin order matching endpoint
 
-## Environment Variables
-- `JWT_SECRET`: Secret key for JWT token generation
-- `JWT_EXPIRATION`: JWT token expiration time
-- `SPRING_DATASOURCE_URL`: Database connection URL
-- `SPRING_DATASOURCE_DRIVERCLASSNAME`: Database driver class
-- `SPRING_JPA_DATABASE-PLATFORM`: Hibernate database platform
 
 ## Recommended Production Configurations
-- Replace H2 with a persistentw
+- Replace H2 with a persistent database
 - Configure secure JWT secret
 - Set up proper network security
 - Implement comprehensive logging using a centralized logging framework like ELK Stack or Splunk
