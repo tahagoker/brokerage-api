@@ -34,7 +34,7 @@ public class AdminController {
             @ApiResponse(responseCode = "403", description = "Unauthorized access"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @PostMapping("/orders/{orderId}/match")
+    @PutMapping("/orders/{orderId}/match")
     public ResponseEntity<Order> matchOrder(
             @Parameter(description = "Order ID to match", required = true)
             @PathVariable String orderId) {
