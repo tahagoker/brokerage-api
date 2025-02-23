@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  brokerage-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:h2:mem:stockorderdb
+      - SPRING_DATASOURCE_DRIVERCLASSNAME=org.h2.Driver
+      - SPRING_JPA_DATABASE-PLATFORM=org.hibernate.dialect.H2Dialect
+      - JWT_SECRET=VGhpc0lzQVZlcnlTZWN1cmVLZXlGb3JKV1RUb2tlbkdlbmVyYXRpb25Gb3JTdG9ja09yZGVyU2VydmljZQ==
+      - JWT_EXPIRATION=86400000
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+
+networks:
+  spring-network:
+    driver: bridge
