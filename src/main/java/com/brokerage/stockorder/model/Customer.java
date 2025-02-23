@@ -25,7 +25,7 @@ public class Customer {
     private String userName;
 
     @JsonIgnore
-    private String passwordHash;
+    private String password;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Asset> assets;
