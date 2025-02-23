@@ -56,7 +56,7 @@ public class AdminService {
     }
 
     private void processBuyOrder(Order order, Asset tryAsset, Asset targetAsset) {
-        BigDecimal totalCost = order.getPrice().multiply(BigDecimal.valueOf(order.getSize()));
+        BigDecimal totalCost = order.getPrice().multiply(order.getSize());
         
         // Update TRY asset (decrease usable size and size by total cost)
         tryAsset.setSize(tryAsset.getSize().subtract(totalCost));
@@ -64,16 +64,16 @@ public class AdminService {
         assetRepository.save(tryAsset);
 
         // Update target asset (increase size by order size)
-        targetAsset.setSize(targetAsset.getSize().add(BigDecimal.valueOf(order.getSize())));
+        targetAsset.setSize(targetAsset.getSize().add(order.getSize()));
         assetRepository.save(targetAsset);
     }
 
     private void processSellOrder(Order order, Asset tryAsset, Asset targetAsset) {
-        BigDecimal totalValue = order.getPrice().multiply(BigDecimal.valueOf(order.getSize()));
+        BigDecimal totalValue = order.getPrice().multiply(order.getSize());
 
         // Update target asset (decrease size and usable size by order size)
-        targetAsset.setSize(targetAsset.getSize().subtract(BigDecimal.valueOf(order.getSize())));
-        targetAsset.setUsableSize(targetAsset.getUsableSize().add(BigDecimal.valueOf(order.getSize())));
+        targetAsset.setSize(targetAsset.getSize().subtract(order.getSize()));
+        targetAsset.setUsableSize(targetAsset.getUsableSize().add(order.getSize()));
         assetRepository.save(targetAsset);
 
         // Update TRY asset (increase size by total value)
