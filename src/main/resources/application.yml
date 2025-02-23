@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: stock-order-service
+
+  security:
+    user:
+      name: admin
+      password: $2a$10$CwPB0BLIR875vHHhBzqsbOIvEORbz/CR1jvP5VlFh6MD9oTU1LxYG
+    
+  # H2 Database Configuration
+  datasource:
+    url: jdbc:h2:mem:stockorderdb
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+  
+  # JPA Configuration
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  
+  # H2 Console Configuration
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: false
+
+# Security Configuration
+security:
+  jwt:
+    secret: VGhpc0lzQVZlcnlTZWN1cmVLZXlGb3JKV1RUb2tlbkdlbmVyYXRpb25Gb3JTdG9ja09yZGVyU2VydmljZQ==
+    expiration: 86400000 # 24 hours in milliseconds
+
+# Server Configuration
+server:
+  port: 8080
+#  servlet:
+#    context-path: /api
+
+# Logging Configuration
+logging:
+  level:
+    com.brokerage.stockorder: DEBUG
+    org.springframework: INFO
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ["health", "info", "metrics"]
+  info:
+    env:
+      enabled: true
