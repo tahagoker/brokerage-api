@@ -63,7 +63,7 @@ public class AssetController {
     }
 
     @Operation(summary = "Deposit money into customer's account",
-               description = "Deposits a specified amount of money into customer's money asset")
+               description = "Deposits a specified amount of money into customer's money asset. This endpoint was not part of the case but I believe it is necessary to have TRY asset for other operations.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Deposit successful",
                     content = @Content(mediaType = "application/json",

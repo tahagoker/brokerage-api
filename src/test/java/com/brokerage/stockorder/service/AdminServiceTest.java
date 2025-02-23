@@ -83,7 +83,7 @@ class AdminServiceTest {
 
         assertEquals(Status.MATCHED, matchedOrder.getStatus());
         verify(orderRepository).save(pendingOrder);
-        verify(assetRepository, times(2)).save(any(Asset.class));
+        verify(assetRepository, times(3)).save(any(Asset.class));
     }
 
     @Test
@@ -100,7 +100,7 @@ class AdminServiceTest {
 
         assertEquals(Status.MATCHED, matchedOrder.getStatus());
         verify(orderRepository).save(pendingOrder);
-        verify(assetRepository, times(2)).save(any(Asset.class));
+        verify(assetRepository, times(3)).save(any(Asset.class));
     }
 
     @Test
