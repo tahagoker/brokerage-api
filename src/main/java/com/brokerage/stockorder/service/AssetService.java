@@ -1,10 +1,10 @@
 package com.brokerage.stockorder.service;
 
+import com.brokerage.stockorder.constants.Assets;
 import com.brokerage.stockorder.exception.BaseException;
 import com.brokerage.stockorder.model.Asset;
 import com.brokerage.stockorder.model.Customer;
 import com.brokerage.stockorder.repository.AssetRepository;
-import com.brokerage.stockorder.util.AssetUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.http.HttpStatus;
@@ -21,17 +21,16 @@ public class AssetService {
     private CustomerService customerService;
 
     public Asset depositMoneyAsset(String customerId, BigDecimal size){
-        Asset asset = getMoneyAsset(customerId);
+        Asset asset = getTRYAsset(customerId);
         if (asset != null) {
             asset.deposit(size);
             return assetRepository.save(asset);
         }
-        return this.createAsset(customerId, AssetUtil.MONEY_ASSET, size);
+        return this.createAsset(customerId, Assets.TRY.name(), size);
     }
 
-    public Asset withdrawMoneyAsset(String customerId, BigDecimal size, String iban){
-        AssetUtil.validateIBAN(iban);
-        Asset asset = getMoneyAsset(customerId);
+    public Asset withdrawMoneyAsset(String customerId, BigDecimal size){
+        Asset asset = getTRYAsset(customerId);
         if (asset != null && asset.withdraw(size)) {
             return assetRepository.save(asset);
         }
@@ -57,8 +56,8 @@ public class AssetService {
         return null;
     }
 
-    public Asset getMoneyAsset(String customerId) {
-        return getAsset(customerId, AssetUtil.MONEY_ASSET);
+    public Asset getTRYAsset(String customerId) {
+        return getAsset(customerId, Assets.TRY.name());
     }
 
     public List<Asset> listAssets(String customerId) {

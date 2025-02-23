@@ -1,10 +1,10 @@
 package com.brokerage.stockorder.service;
 
+import com.brokerage.stockorder.constants.Assets;
 import com.brokerage.stockorder.exception.BaseException;
 import com.brokerage.stockorder.model.Asset;
 import com.brokerage.stockorder.model.Customer;
 import com.brokerage.stockorder.repository.AssetRepository;
-import com.brokerage.stockorder.util.AssetUtil;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
@@ -32,9 +32,9 @@ public class AssetServiceTest {
     @InjectMocks
     private AssetService assetService;
 
-    private final String customerId = "0ab13a37-2709-4f60-970b-b9abf3706d29";
-    private final String goldAssetName = "gold";
-    private final String IBAN = "TR120006231835114662289757";
+    private final String customerId = "567ae529-5d31-4482-be17-fc27b85b9619";
+    private final String goldAssetName = "BTC";
+
 
     private BigDecimal size = BigDecimal.valueOf(100);
 
@@ -62,7 +62,7 @@ public class AssetServiceTest {
         Asset asset = Asset.builder().customer(new Customer(customerId)).assetName(goldAssetName).size(size)
                 .usableSize(size).build();
 
-        Mockito.when(assetService.getAsset(customerId, AssetUtil.MONEY_ASSET)).thenReturn(null);
+        Mockito.when(assetService.getAsset(customerId, Assets.TRY.name())).thenReturn(null);
         Mockito.when(assetRepository.save(any(Asset.class))).thenReturn(asset);
 
         Asset result = assetService.depositMoneyAsset(customerId, size);
@@ -74,7 +74,7 @@ public class AssetServiceTest {
 
     @Test
     public void testDepositMoneyAsset_existingAsset(){
-        Asset asset = Asset.builder().assetName(AssetUtil.MONEY_ASSET).size(size).usableSize(size).build();
+        Asset asset = Asset.builder().assetName(Assets.TRY.name()).size(size).usableSize(size).build();
         Customer customer = Customer.builder().assets(List.of(asset)).build();
 
         Mockito.when(customerService.getCustomer(customerId)).thenReturn(customer);
@@ -89,13 +89,13 @@ public class AssetServiceTest {
 
     @Test
     public void testWithdrawMoneyAsset_sufficientFunds() {
-        Asset moneyAsset = Asset.builder().assetName(AssetUtil.MONEY_ASSET).size(size).usableSize(size).build();
+        Asset moneyAsset = Asset.builder().assetName(Assets.TRY.name()).size(size).usableSize(size).build();
         Customer customer = Customer.builder().assets(List.of(moneyAsset)).build();
 
         Mockito.when(customerService.getCustomer(customerId)).thenReturn(customer);
         Mockito.when(assetRepository.save(any(Asset.class))).thenReturn(moneyAsset);
 
-        Asset result = assetService.withdrawMoneyAsset(customerId, size, IBAN);
+        Asset result = assetService.withdrawMoneyAsset(customerId, size);
 
         assertEquals(moneyAsset.getSize(), result.getSize());
         verify(assetRepository, times(1)).save(any(Asset.class));
@@ -105,13 +105,13 @@ public class AssetServiceTest {
     @Test
     public void testWithdrawMoneyAsset_insufficientFunds() {
         BigDecimal withdrawAmount = size.add(BigDecimal.ONE);
-        Asset moneyAsset = Asset.builder().assetName(AssetUtil.MONEY_ASSET).size(size).usableSize(size).build();
+        Asset moneyAsset = Asset.builder().assetName(Assets.TRY.name()).size(size).usableSize(size).build();
         Customer customer = Customer.builder().assets(List.of(moneyAsset)).build();
 
         Mockito.when(customerService.getCustomer(customerId)).thenReturn(customer);
 
         Exception exception = assertThrows(BaseException.class, () ->
-                assetService.withdrawMoneyAsset(customerId, withdrawAmount, IBAN));
+                assetService.withdrawMoneyAsset(customerId, withdrawAmount));
 
         assertEquals("Insufficient funds", exception.getMessage());
         assertEquals(HttpStatus.NOT_ACCEPTABLE, ((BaseException) exception).getStatus());
@@ -123,7 +123,7 @@ public class AssetServiceTest {
         String invalidIBAN = "invalid iban";
         String exceptionMessage = "Invalid IBAN: " + invalidIBAN;
         Exception exception = assertThrows(BaseException.class, () ->
-                assetService.withdrawMoneyAsset(customerId, size, invalidIBAN));
+                assetService.withdrawMoneyAsset(customerId, size));
 
         assertEquals(exceptionMessage, exception.getMessage());
         assertEquals(HttpStatus.BAD_REQUEST, ((BaseException) exception).getStatus());

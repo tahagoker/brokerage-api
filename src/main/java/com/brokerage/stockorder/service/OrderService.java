@@ -1,5 +1,6 @@
 package com.brokerage.stockorder.service;
 
+import com.brokerage.stockorder.constants.Assets;
 import com.brokerage.stockorder.constants.Side;
 import com.brokerage.stockorder.constants.Status;
 import com.brokerage.stockorder.exception.BaseException;
@@ -8,7 +9,6 @@ import com.brokerage.stockorder.model.Customer;
 import com.brokerage.stockorder.model.Order;
 import com.brokerage.stockorder.repository.OrderRepository;
 import com.brokerage.stockorder.dto.CreateOrderRequestDto;
-import com.brokerage.stockorder.util.AssetUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -43,7 +43,7 @@ public class OrderService {
             throw new BaseException(String.format("Order not found for orderId: %s", orderId), HttpStatus.NOT_FOUND);
         }
         Asset customerAssetForOrder = order.getOrderSide().equals(Side.BUY) ?
-                assetService.getMoneyAsset(order.getCustomer().getId()) :
+                assetService.getTRYAsset(order.getCustomer().getId()) :
                 assetService.getAsset(order.getCustomer().getId(), order.getAssetName());
 
         //release usable size accordingly
@@ -58,7 +58,7 @@ public class OrderService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Order createOrder(CreateOrderRequestDto request) {
         String customerId = request.getCustomerId();
-        String assetNameToValidate = request.getOrderSide().equals(Side.BUY) ? AssetUtil.MONEY_ASSET : request.getAssetName();
+        String assetNameToValidate = request.getOrderSide().equals(Side.BUY) ? Assets.TRY.name() : request.getAssetName();
         //check order applicable
         Asset customerAssetForOrder = assetService.getAsset(customerId, assetNameToValidate);
 

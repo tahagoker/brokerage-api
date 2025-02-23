@@ -1,8 +1,9 @@
 package com.brokerage.stockorder.constants;
 
-import java.util.EnumMap;
-
-public enum Asset {
+public enum Assets {
   TRY,
-  USD
+  USD,
+  ETC,
+  BTC,
+  //etc..
 }

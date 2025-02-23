@@ -1,5 +1,6 @@
 package com.brokerage.stockorder.service;
 
+import com.brokerage.stockorder.constants.Assets;
 import com.brokerage.stockorder.constants.Side;
 import com.brokerage.stockorder.constants.Status;
 import com.brokerage.stockorder.exception.BaseException;
@@ -8,7 +9,6 @@ import com.brokerage.stockorder.model.Customer;
 import com.brokerage.stockorder.model.Order;
 import com.brokerage.stockorder.repository.OrderRepository;
 import com.brokerage.stockorder.dto.CreateOrderRequestDto;
-import com.brokerage.stockorder.util.AssetUtil;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
@@ -134,10 +134,10 @@ public class OrderServiceTest {
     request.setSize(size);
     request.setPrice(price);
 
-    Asset asset = Asset.builder().assetName(AssetUtil.MONEY_ASSET)
+    Asset asset = Asset.builder().assetName(Assets.TRY.name())
         .usableSize(request.getTotalPrice())
         .build();
-    when(assetService.getAsset(customerId, AssetUtil.MONEY_ASSET)).thenReturn(asset);
+    when(assetService.getAsset(customerId, Assets.TRY.name())).thenReturn(asset);
     Order order = new Order();
     when(orderRepository.save(any(Order.class))).thenReturn(order);
 
@@ -158,9 +158,9 @@ public class OrderServiceTest {
     request.setSize(size);
     request.setPrice(price);
 
-    Asset asset = Asset.builder().assetName(AssetUtil.MONEY_ASSET)
+    Asset asset = Asset.builder().assetName(Assets.TRY.name())
         .usableSize(request.getTotalPrice().subtract(BigDecimal.TEN)).build();
-    when(assetService.getAsset(customerId, AssetUtil.MONEY_ASSET)).thenReturn(asset);
+    when(assetService.getAsset(customerId, Assets.TRY.name())).thenReturn(asset);
 
     BaseException exception = assertThrows(BaseException.class, () -> {
       orderService.createOrder(request);
