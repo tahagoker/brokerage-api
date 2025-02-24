@@ -1,6 +1,9 @@
 package com.brokerage.stockorder.service;
 
 import com.brokerage.stockorder.dto.LoginResponseDto;
+import com.brokerage.stockorder.exception.AuthenticationException;
+import com.brokerage.stockorder.exception.InvalidCredentialsException;
+import com.brokerage.stockorder.exception.UserNotFoundException;
 import com.brokerage.stockorder.model.Customer;
 import com.brokerage.stockorder.repository.CustomerRepository;
 import com.brokerage.stockorder.security.JwtTokenProvider;
@@ -12,6 +15,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -85,14 +90,15 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    void login_InvalidCredentials_ThrowsException() {
+    void login_InvalidCredentials_ThrowsInvalidCredentialsException() {
         // Arrange
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
             .thenThrow(new BadCredentialsException("Invalid credentials"));
 
         // Act & Assert
-        assertThrows(BadCredentialsException.class,
+        InvalidCredentialsException exception = assertThrows(InvalidCredentialsException.class,
             () -> authenticationService.login(USERNAME, PASSWORD));
+        assertEquals("Invalid username or password", exception.getMessage());
 
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
         verify(jwtTokenProvider, never()).createToken(any(), any());
@@ -100,7 +106,7 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    void login_UserNotFound_ThrowsException() {
+    void login_UserNotFound_ThrowsUserNotFoundException() {
         // Arrange
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
             .thenReturn(authentication);
@@ -110,13 +116,45 @@ class AuthenticationServiceTest {
             .thenReturn(Optional.empty());
 
         // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class,
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class,
             () -> authenticationService.login(USERNAME, PASSWORD));
-        assertEquals("User not found", exception.getMessage());
+        assertEquals("User not found with username: " + USERNAME, exception.getMessage());
 
         // Verify interactions
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
         verify(jwtTokenProvider).createToken(eq(USERNAME), any());
         verify(customerRepository).findByUserName(USERNAME);
+    }
+
+    @Test
+    void login_DisabledAccount_ThrowsAuthenticationException() {
+        // Arrange
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+            .thenThrow(new DisabledException("Account is disabled"));
+
+        // Act & Assert
+        AuthenticationException exception = assertThrows(AuthenticationException.class,
+            () -> authenticationService.login(USERNAME, PASSWORD));
+        assertEquals("Account is disabled", exception.getMessage());
+
+        verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
+        verify(jwtTokenProvider, never()).createToken(any(), any());
+        verify(customerRepository, never()).findByUserName(any());
+    }
+
+    @Test
+    void login_LockedAccount_ThrowsAuthenticationException() {
+        // Arrange
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+            .thenThrow(new LockedException("Account is locked"));
+
+        // Act & Assert
+        AuthenticationException exception = assertThrows(AuthenticationException.class,
+            () -> authenticationService.login(USERNAME, PASSWORD));
+        assertEquals("Account is locked", exception.getMessage());
+
+        verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
+        verify(jwtTokenProvider, never()).createToken(any(), any());
+        verify(customerRepository, never()).findByUserName(any());
     }
 }

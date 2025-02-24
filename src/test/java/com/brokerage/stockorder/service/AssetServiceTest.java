@@ -58,14 +58,14 @@ public class AssetServiceTest {
     }
 
     @Test
-    public void testDepositMoneyAsset_noExistingAsset(){
+    public void testDepositTRYAsset_noExistingAsset(){
         Asset asset = Asset.builder().customer(new Customer(customerId)).assetName(goldAssetName).size(size)
                 .usableSize(size).build();
 
         Mockito.when(assetService.getAsset(customerId, Assets.TRY.name())).thenReturn(null);
         Mockito.when(assetRepository.save(any(Asset.class))).thenReturn(asset);
 
-        Asset result = assetService.depositMoneyAsset(customerId, size);
+        Asset result = assetService.depositTRYAsset(customerId, size);
 
         assertEquals(asset.getSize(), result.getSize());
         verify(assetRepository, times(1)).save(any(Asset.class));
@@ -73,14 +73,14 @@ public class AssetServiceTest {
     }
 
     @Test
-    public void testDepositMoneyAsset_existingAsset(){
+    public void testDepositTRYAsset_existingAsset(){
         Asset asset = Asset.builder().assetName(Assets.TRY.name()).size(size).usableSize(size).build();
         Customer customer = Customer.builder().assets(List.of(asset)).build();
 
         Mockito.when(customerService.getCustomer(customerId)).thenReturn(customer);
         Mockito.when(assetRepository.save(any(Asset.class))).thenAnswer(i -> i.getArguments()[0]);
 
-        Asset result = assetService.depositMoneyAsset(customerId, BigDecimal.TEN);
+        Asset result = assetService.depositTRYAsset(customerId, BigDecimal.TEN);
 
         assertEquals(size.add(BigDecimal.TEN), result.getSize());
         verify(assetRepository, times(1)).save(any(Asset.class));
@@ -88,14 +88,14 @@ public class AssetServiceTest {
     }
 
     @Test
-    public void testWithdrawMoneyAsset_sufficientFunds() {
+    public void testWithdrawTRYAsset_sufficientFunds() {
         Asset moneyAsset = Asset.builder().assetName(Assets.TRY.name()).size(size).usableSize(size).build();
         Customer customer = Customer.builder().assets(List.of(moneyAsset)).build();
 
         Mockito.when(customerService.getCustomer(customerId)).thenReturn(customer);
         Mockito.when(assetRepository.save(any(Asset.class))).thenReturn(moneyAsset);
 
-        Asset result = assetService.withdrawMoneyAsset(customerId, size);
+        Asset result = assetService.withdrawTRYAsset(customerId, size);
 
         assertEquals(moneyAsset.getSize(), result.getSize());
         verify(assetRepository, times(1)).save(any(Asset.class));
@@ -103,7 +103,7 @@ public class AssetServiceTest {
     }
 
     @Test
-    public void testWithdrawMoneyAsset_insufficientFunds() {
+    public void testWithdrawTRYAsset_insufficientFunds() {
         BigDecimal withdrawAmount = size.add(BigDecimal.ONE);
         Asset moneyAsset = Asset.builder().assetName(Assets.TRY.name()).size(size).usableSize(size).build();
         Customer customer = Customer.builder().assets(List.of(moneyAsset)).build();
@@ -111,22 +111,10 @@ public class AssetServiceTest {
         Mockito.when(customerService.getCustomer(customerId)).thenReturn(customer);
 
         Exception exception = assertThrows(BaseException.class, () ->
-                assetService.withdrawMoneyAsset(customerId, withdrawAmount));
+                assetService.withdrawTRYAsset(customerId, withdrawAmount));
 
         assertEquals("Insufficient funds", exception.getMessage());
         assertEquals(HttpStatus.NOT_ACCEPTABLE, ((BaseException) exception).getStatus());
-        verify(assetRepository, never()).save(any(Asset.class));
-    }
-
-    @Test
-    public void testWithdrawMoneyAsset_invalidIBAN() {
-        String invalidIBAN = "invalid iban";
-        String exceptionMessage = "Invalid IBAN: " + invalidIBAN;
-        Exception exception = assertThrows(BaseException.class, () ->
-                assetService.withdrawMoneyAsset(customerId, size));
-
-        assertEquals(exceptionMessage, exception.getMessage());
-        assertEquals(HttpStatus.BAD_REQUEST, ((BaseException) exception).getStatus());
         verify(assetRepository, never()).save(any(Asset.class));
     }
 }

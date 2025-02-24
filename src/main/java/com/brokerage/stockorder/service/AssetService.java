@@ -21,7 +21,13 @@ public class AssetService {
   @Autowired
   private CustomerService customerService;
 
-  public Asset depositMoneyAsset(String customerId, BigDecimal size) {
+  public List<Asset> listAssets(String customerId) {
+    Example<Asset> assetExample = Example.of(
+        Asset.builder().customer(new Customer(customerId)).build());
+    return assetRepository.findAll(assetExample);
+  }
+
+  public Asset depositTRYAsset(String customerId, BigDecimal size) {
     Asset asset = getTRYAsset(customerId);
     if (asset != null) {
       asset.deposit(size);
@@ -30,7 +36,7 @@ public class AssetService {
     return this.createAsset(customerId, Assets.TRY.name(), size);
   }
 
-  public Asset withdrawMoneyAsset(String customerId, BigDecimal size) {
+  public Asset withdrawTRYAsset(String customerId, BigDecimal size) {
     Asset asset = getTRYAsset(customerId);
     if (asset != null && asset.withdraw(size)) {
       return assetRepository.save(asset);
@@ -62,9 +68,5 @@ public class AssetService {
     return getAsset(customerId, Assets.TRY.name());
   }
 
-  public List<Asset> listAssets(String customerId) {
-    Example<Asset> assetExample = Example.of(
-        Asset.builder().customer(new Customer(customerId)).build());
-    return assetRepository.findAll(assetExample);
-  }
+
 }

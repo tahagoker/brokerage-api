@@ -3,7 +3,6 @@ package com.brokerage.stockorder.controller;
 import com.brokerage.stockorder.dto.CreateAssetRequestDto;
 import com.brokerage.stockorder.model.Asset;
 import com.brokerage.stockorder.service.AssetService;
-import org.springdoc.core.annotations.ParameterObject;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -78,7 +77,7 @@ public class AssetController {
             @RequestParam String customerId,
             @Parameter(description = "Amount to deposit", required = true)
             @RequestParam BigDecimal size) {
-        return ResponseEntity.ok(assetService.depositMoneyAsset(customerId, size));
+        return ResponseEntity.ok(assetService.depositTRYAsset(customerId, size));
     }
 
     @Operation(summary = "Withdraw money from customer's account",
@@ -97,6 +96,6 @@ public class AssetController {
             @RequestParam String customerId,
             @Parameter(description = "Amount to withdraw", required = true)
             @RequestParam BigDecimal size) {
-        return ResponseEntity.ok(assetService.withdrawMoneyAsset(customerId, size));
+        return ResponseEntity.ok(assetService.withdrawTRYAsset(customerId, size));
     }
 }

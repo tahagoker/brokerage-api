@@ -46,11 +46,8 @@ public class OrderService {
                 assetService.getTRYAsset(order.getCustomer().getId()) :
                 assetService.getAsset(order.getCustomer().getId(), order.getAssetName());
 
-        //release usable size accordingly
         customerAssetForOrder.setUsableSize(calculateAssetAfterOrderCancelled(order, customerAssetForOrder));
-        //make order status cancelled
         order.setStatus(Status.CANCELLED);
-        //transactional
         assetService.updateAsset(customerAssetForOrder);
         orderRepository.save(order);
     }

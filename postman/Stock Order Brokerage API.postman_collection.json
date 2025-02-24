@@ -3,7 +3,8 @@
 		"_postman_id": "abc23e34-189f-4bc4-94df-281f6684fd06",
 		"name": "Stock Order Brokerage API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "42551288"
+		"_exporter_id": "42551288",
+		"_collection_link": "https://mustafa-taha.postman.co/workspace/Mustafa-Taha-Workspace~e624beca-fa3a-4d02-b800-5d9b589835f6/collection/42551288-abc23e34-189f-4bc4-94df-281f6684fd06?action=share&source=collection_link&creator=42551288"
 	},
 	"item": [
 		{
@@ -108,7 +109,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"customerId\": \"b42846d3-5136-4e33-a6c7-2948e2653b98\",\r\n    \"assetName\": \"ETC\",\r\n    \"orderSide\": \"BUY\",\r\n    \"size\": 5,\r\n    \"price\": 1000\r\n}",
+							"raw": "{\r\n    \"customerId\": \"e706be9f-7b01-4e74-bd4d-85453f7d1b07\",\r\n    \"assetName\": \"ETC\",\r\n    \"orderSide\": \"BUY\",\r\n    \"size\": 5,\r\n    \"price\": 1000\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -364,7 +365,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:8080/api/v1/asset/deposit?customerId=b42846d3-5136-4e33-a6c7-2948e2653b98&size=50000",
+							"raw": "http://localhost:8080/api/v1/asset/deposit?customerId=e706be9f-7b01-4e74-bd4d-85453f7d1b07&size=50000",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -379,7 +380,7 @@
 							"query": [
 								{
 									"key": "customerId",
-									"value": "b42846d3-5136-4e33-a6c7-2948e2653b98"
+									"value": "e706be9f-7b01-4e74-bd4d-85453f7d1b07"
 								},
 								{
 									"key": "size",
@@ -427,12 +428,6 @@
 								{
 									"key": "size",
 									"value": "10"
-								},
-								{
-									"key": "iban",
-									"value": "TR123",
-									"description": "invalid iban for test",
-									"disabled": true
 								},
 								{
 									"key": "customerId",
