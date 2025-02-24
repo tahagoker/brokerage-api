@@ -1,5 +1,6 @@
 package com.brokerage.stockorder.service;
 
+import com.brokerage.stockorder.dto.RegisterResponseDto;
 import com.brokerage.stockorder.model.Customer;
 import com.brokerage.stockorder.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,11 +18,16 @@ public class CustomerService implements UserDetailsService {
     private final CustomerRepository customerRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public Customer registerCustomer(String username, String password) {
-        return customerRepository.save(Customer.builder()
+    public RegisterResponseDto registerCustomer(String username, String password) {
+        Customer customer = customerRepository.save(Customer.builder()
             .userName(username)
             .password(passwordEncoder.encode(password))
             .build());
+            
+        return RegisterResponseDto.builder()
+            .id(customer.getId())
+            .username(customer.getUserName())
+            .build();
     }
 
     public Customer getCustomer(String customerId) {
@@ -30,7 +36,6 @@ public class CustomerService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // Önce application.yml'daki admin kullanıcısını kontrol et
         if ("admin".equals(username)) {
             return User.builder()
                 .username("admin")
@@ -39,7 +44,6 @@ public class CustomerService implements UserDetailsService {
                 .build();
         }
 
-        // Veritabanındaki kullanıcıları kontrol et
         Customer customer = customerRepository.findByUserName(username)
             .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 

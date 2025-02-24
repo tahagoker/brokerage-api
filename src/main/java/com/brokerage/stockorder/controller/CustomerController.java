@@ -3,7 +3,7 @@ package com.brokerage.stockorder.controller;
 import com.brokerage.stockorder.dto.LoginRequestDto;
 import com.brokerage.stockorder.dto.LoginResponseDto;
 import com.brokerage.stockorder.dto.RegisterRequestDto;
-import com.brokerage.stockorder.model.Customer;
+import com.brokerage.stockorder.dto.RegisterResponseDto;
 import com.brokerage.stockorder.service.AuthenticationService;
 import com.brokerage.stockorder.service.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,12 +39,12 @@ public class CustomerController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Customer registered successfully",
                     content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = Customer.class))),
+                    schema = @Schema(implementation = RegisterResponseDto.class))),
         @ApiResponse(responseCode = "400", description = "Invalid input data or username already exists"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping("/register")
-    public ResponseEntity<Customer> register(
+    public ResponseEntity<RegisterResponseDto> register(
             @Parameter(description = "Registration details including username and password", required = true)
             @Valid @RequestBody RegisterRequestDto registerRequest) {
         log.info("Register request received for username: {}", registerRequest.getUsername());

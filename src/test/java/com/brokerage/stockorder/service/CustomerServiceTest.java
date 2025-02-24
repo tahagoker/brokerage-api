@@ -1,5 +1,6 @@
 package com.brokerage.stockorder.service;
 
+import com.brokerage.stockorder.dto.RegisterResponseDto;
 import com.brokerage.stockorder.model.Customer;
 import com.brokerage.stockorder.repository.CustomerRepository;
 import org.junit.Test;
@@ -35,12 +36,20 @@ public class CustomerServiceTest {
     public void testRegisterCustomer(){
         String username = "testuser";
         String password = "123456";
+        String id = "b42846d3-5136-4e33-a6c7-2948e2653b98";
 
-        when(customerRepository.save(any(Customer.class))).thenAnswer(i -> i.getArgument(0));
-        Customer result = customerService.registerCustomer(username, password);
+        Customer mockCustomer = Customer.builder()
+            .id(id)
+            .userName(username)
+            .password(password)
+            .build();
+
+        when(customerRepository.save(any(Customer.class))).thenReturn(mockCustomer);
+        RegisterResponseDto result = customerService.registerCustomer(username, password);
 
         assertNotNull(result);
-        assertEquals(username, result.getUserName());
+        assertEquals(username, result.getUsername());
+        assertEquals(id, result.getId());
         verify(customerRepository, times(1)).save(any(Customer.class));
     }
 }
